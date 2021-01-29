@@ -1,16 +1,48 @@
+from os import name
 import sys
 import hash
-import Exception
+import crypt_1 #시저, 대칭, RSA 모듈(이름 변경 필요)
+import Number
+import multiprocessing as mp
+import datetime
+import time
 
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5 import QtCore
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QThread, pyqtSignal
+from multiprocessing import Process, Queue
 
 #! 변수명 통일 필요
 
+def producer(q):
+    proc = mp.current_process()
+    
+    while True:
+        now = datetime.datetime.now()
+        data = str(now)
+        q.put(data)
+        time.sleep(1)
+
+
+
+class Consumer(QThread):
+    poped = pyqtSignal(str)
+
+    def __init__(self, q):
+        super().__init__()
+        self.q = q
+
+    def run(self):
+        while True:
+            if not self.q.empty():
+                data = q.get()
+                self.poped.emit(data)
+
+
+
 class MainWindow(QMainWindow):
-    def __init__(self):
+    def __init__(self, q):
         super().__init__()
         
         # 윈도우 설정
@@ -18,11 +50,20 @@ class MainWindow(QMainWindow):
         #self.setFixedSize(400, 400) # 크기고정
         self.setWindowTitle('HOMIN PROJECT')
 
+        #멀티프로세싱 설정
+        self.consumer = Consumer(q)
+        self.consumer.poped.connect(self.Tab1)
+        self.consumer.poped.connect(self.Tab2)
+        #self.consumer.poped.connect(self.Tab3) -> 나중에 풀 것
+
         # Tab Set
         tabs = QTabWidget()
         tabs.addTab(self.Tab1(), 'NUM')
         tabs.addTab(self.Tab2(), 'HASH')
-        tabs.addTab(self.Tab3(), 'DEFENDER')
+        #tabs.addTab(self.Tab3(), 'DEFENDER') -> 나중에 풀 것
+        tabs.addTab(self.Tab4(), 'CEASAR')
+        tabs.addTab(self.Tab5(), 'RSA')
+        tabs.addTab(self.Tab6(), 'NUM')
 
         # QMainWindow 추가
         self.setCentralWidget(tabs)
@@ -215,7 +256,7 @@ class MainWindow(QMainWindow):
         return tab
 
     #! 영어 100%가능, 한글 불가능(UTF-8로 디코딩해줘야됨)
-    def Tab3(self):
+    '''def Tab3(self):
         grid = QGridLayout()
 
         # 변수 선언 부분
@@ -298,11 +339,269 @@ class MainWindow(QMainWindow):
     #! 작동 안됨 왜지?
     def btn_sub3(self):
         Exception.SubPath(self.ex_input_box.toPlainText())
-        self.text_box3.setText(Exception.list_path())
+        self.text_box3.setText(Exception.list_path())'''
+
+
+    def Tab4(self):
+        grid = QGridLayout()
+        
+        self.dump_label = QLabel(self)
+        self.ceasar_text_box = QTextEdit()
+        self.ceasar_input_line = QLineEdit()
+
+        btn_ceasar_encoding = QPushButton('encoding', self)
+
+        btn_ceasar_encoding.clicked.connect(self.Ceasar_encode)
+
+        self.spinbox = QSpinBox()
+        self.spinbox.setRange(-25,25)
+        self.spinbox.setSingleStep(1)
+
+        grid.addWidget(self.ceasar_text_box, 0,0,1,0)
+        grid.addWidget(self.spinbox, 1, 0, 1,0)
+        grid.addWidget(self.ceasar_input_line,2,0)
+        grid.addWidget(btn_ceasar_encoding,2,1)
+
+        
+
+        tab = QWidget()
+        tab.setLayout(grid)
+        return tab
+
+    #시저 암호 인코딩 버튼 이벤트
+    def Ceasar_encode(self):
+        self.ceasar_text_box.setText(crypt_1.Ceasar_Crypt(self.ceasar_input_line.text(),self.spinbox.value()))
+
+    #! RSA 파일 경로 입력창을 경로 전용 입력 창으로 변경 필요
+    def Tab5(self):
+        grid = QGridLayout()
+
+        self.rsa_label1 = QLabel('data', self)
+        self.rsa_label2 = QLabel('private key', self)
+        self.rsa_label3 = QLabel('public key',self)
+        self.rsa_label4 = QLabel('path',self)
+        self.rsa_label5 = QLabel('input data',self)
+
+        self.rsa_textbox_data = QTextEdit()
+        self.rsa_textbox_prikey = QTextEdit()
+        self.rsa_textbox_pubkey = QTextEdit()
+        self.rsa_textbox_path = QTextEdit()
+        self.rsa_textbox_inputdata = QTextEdit()
+
+        btn_rsa_readme = QPushButton('readme', self)
+        btn_rsa_createkey = QPushButton('create key', self)
+        btn_rsa_encoding = QPushButton('encoding', self)
+        btn_rsa_decoding = QPushButton('decoding', self)
+
+
+        self.rsa_cb = QComboBox(self)
+        self.rsa_cb.addItem('RSA PKCS#1 v1.5')
+        self.rsa_cb.addItem('RSA PKCS#1 OAEP')
+
+        btn_rsa_readme.clicked.connect(self.RSA_readme)
+        btn_rsa_createkey.clicked.connect(self.RSA_createkey)
+        btn_rsa_encoding.clicked.connect(self.RSA_encode)
+        btn_rsa_decoding.clicked.connect(self.RSA_decode)
+
+        grid.addWidget(self.rsa_cb,0,0,1,4)
+
+        grid.addWidget(self.rsa_label1,1,0,1,4)
+        grid.addWidget(self.rsa_textbox_data,2,0,1,4)
+
+        grid.addWidget(self.rsa_label2,3,0,1,2)
+        grid.addWidget(self.rsa_label3,3,2,1,2)
+        grid.addWidget(self.rsa_textbox_prikey,4,0,1,2)
+        grid.addWidget(self.rsa_textbox_pubkey,4,2,1,2)
+
+        grid.addWidget(self.rsa_label4,5,0,1,2)
+        grid.addWidget(self.rsa_label5,5,2,1,2)
+        grid.addWidget(self.rsa_textbox_path,6,0,1,2)
+        grid.addWidget(self.rsa_textbox_inputdata,6,2,1,2)
+
+        grid.addWidget(btn_rsa_readme,7,0,1,1)
+        grid.addWidget(btn_rsa_createkey,7,1,1,1)
+        grid.addWidget(btn_rsa_encoding,7,2,1,1)
+        grid.addWidget(btn_rsa_decoding,7,3,1,1)
+
+
+        tab = QWidget()
+        tab.setLayout(grid)
+        return tab
+
+    #!RSA 인코딩 버튼 이벤트 (아직 버튼 안만들고 내용도 안넣음)
+    def RSA_encode(self):
+        if(self.rsa_cb.currentText() == 'RSA PKCS#1 v1.5'):
+            self.rsa_textbox_data.setText(crypt_1.RSA_PKCS1_v1_5_Encode(self.rsa_textbox_path.toPlainText(),self.rsa_textbox_inputdata.toPlainText()))
+        
+        elif(self.rsa_cb.currentText() == 'RSA PKCS#1 OAEP'):
+            self.rsa_textbox_data.setText(crypt_1.RSA_OAEP_Encode(self.rsa_textbox_path.toPlainText(),self.rsa_textbox_inputdata.toPlainText()))
+
+    #!RSA 디코딩 버튼 이벤트
+    def RSA_decode(self):
+        if(self.rsa_cb.currentText() == 'RSA PKCS#1 v1.5'):
+            self.rsa_textbox_data.setText(crypt_1.RSA_PKCS1_v1_5_Decode(self.rsa_textbox_path.toPlainText()))
+
+        elif(self.rsa_cb.currentText() == 'RSA PKCS#1 OAEP'):
+            self.rsa_textbox_data.setText(crypt_1.RSA_OAEP_Decode(self.rsa_textbox_path.toPlainText()))
+
+    #!RSA 키생성 버튼 이벤트 (메세지박스 크기 조절 필요! : 텍스트나 라벨의 크기를 조정한 후 메시지박스에 넣어야 함)
+    def RSA_createkey(self):
+        crypt_1.Create_Key(self.rsa_textbox_path.toPlainText())
+        self.rsa_textbox_prikey.setText(crypt_1.Read_Pri_Key(self.rsa_textbox_path.toPlainText()))
+        self.rsa_textbox_pubkey.setText(crypt_1.Read_Pub_Key(self.rsa_textbox_path.toPlainText()))
+        QMessageBox.about(self, "createkey", "created!!!")
+
+        
+
+    #!RSA readme 버튼 이벤트 (다이얼로그 사용해야 함)
+    def RSA_readme(self):
+        print(4)
+
+    #2,8,10,16진수 탭
+    def Tab6(self):
+        grid = QGridLayout()
+
+        self.num_ck_box1 = QCheckBox('2진수', self)
+        self.num_ck_box2 = QCheckBox('8진수', self)        
+        self.num_ck_box3 = QCheckBox('10진수', self)
+        self.num_ck_box4 = QCheckBox('16진수', self)
+
+        self.num_ck_box1.toggle()
+        self.num_ck_box2.toggle()
+        self.num_ck_box3.toggle()
+        self.num_ck_box4.toggle()
+
+        self.num_ck_box1.stateChanged.connect(self.Num_Ck_Box1)
+        self.num_ck_box2.stateChanged.connect(self.Num_Ck_Box2)
+        self.num_ck_box3.stateChanged.connect(self.Num_Ck_Box3)
+        self.num_ck_box4.stateChanged.connect(self.Num_Ck_Box4)
+
+        
+        #라인
+        self.num_line1 = QLineEdit()
+        self.num_line2 = QLineEdit()
+        self.num_line3 = QLineEdit()
+        self.num_line4 = QLineEdit()
+
+        #입력 박스
+        self.num_label_text = QLabel('INPUT DATA')
+        self.num_input_box = QTextEdit(self)
+
+
+        #버튼
+        btn_num_incoding = QPushButton('INCODING',self)
+        btn_num_reset = QPushButton('RESET', self)
+
+        btn_num_incoding.clicked.connect(self.Num_Incoding_Btn)
+        btn_num_reset.clicked.connect(self.Num_Reset_Btn)
+
+        #콤보 박스 (입력 진수 선택)
+        self.num_cb = QComboBox(self)
+        self.num_cb.addItem('10진수')
+        self.num_cb.addItem('2진수')
+        self.num_cb.addItem('8진수')
+        self.num_cb.addItem('16진수')
+
+        #그리드
+        grid.addWidget(self.num_cb, 0,0,1,7)
+
+        grid.addWidget(self.num_ck_box1,1,0)
+        grid.addWidget(self.num_line1,1,1,1,6)
+        
+        grid.addWidget(self.num_ck_box2,2,0)
+        grid.addWidget(self.num_line2,2,1,1,6)
+
+        grid.addWidget(self.num_ck_box3,3,0)
+        grid.addWidget(self.num_line3,3,1,1,6)
+        
+        grid.addWidget(self.num_ck_box4,4,0)
+        grid.addWidget(self.num_line4,4,1,1,6)
+
+        grid.addWidget(self.num_label_text,5,0)
+        grid.addWidget(self.num_input_box,6,0,1,7)
+
+        grid.addWidget(btn_num_incoding,9,2)
+        grid.addWidget(btn_num_reset,9,3)
+
+
+        tab = QWidget()
+        tab.setLayout(grid)
+        return tab
+
+    #넘버 인코딩 버튼
+    #! 입력 진수 선택에 따라서 if문 설정 및 체크 박스 상태 확인
+    def Num_Incoding_Btn(self):
+        if(self.num_cb.currentText() == '10진수'):
+            self.num_line1.setText(Number.Bin_Number_DEC(self.num_input_box.toPlainText()))
+            self.num_line2.setText(Number.Oct_Number_DEC(self.num_input_box.toPlainText()))
+            self.num_line3.setText("")
+            self.num_line4.setText(Number.Hex_Number_DEC(self.num_input_box.toPlainText()))
+
+        elif(self.num_cb.currentText() == '2진수'):
+            self.num_line1.setText("")
+            self.num_line2.setText(Number.Oct_Number_BIN(self.num_input_box.toPlainText()))
+            self.num_line3.setText(Number.Dec_Number_BIN(self.num_input_box.toPlainText()))
+            self.num_line4.setText(Number.Hex_Number_BIN(self.num_input_box.toPlainText()))
+        
+        elif(self.num_cb.currentText() == '8진수'):
+            self.num_line1.setText(Number.Bin_Number_OCT(self.num_input_box.toPlainText()))
+            self.num_line2.setText("")
+            self.num_line3.setText(Number.Dec_Number_OCT(self.num_input_box.toPlainText()))
+            self.num_line4.setText(Number.Hex_Number_OCT(self.num_input_box.toPlainText()))
+        
+        elif(self.num_cb.currentText() == '16진수'):
+            self.num_line1.setText(Number.Bin_Number_HEX(self.num_input_box.toPlainText()))
+            self.num_line2.setText(Number.Oct_Number_HEX(self.num_input_box.toPlainText()))
+            self.num_line3.setText(Number.Dec_Number_HEX(self.num_input_box.toPlainText()))
+            self.num_line4.setText("")
+
+
+    #넘버 리셋 버튼 (체크 박스 모두 선택으로 변경 및 값 초기화)
+    def Num_Reset_Btn(self):
+        self.num_line1.setText("")
+        self.num_line2.setText("")
+        self.num_line3.setText("")
+        self.num_line4.setText("")
+        self.num_input_box.setText("")
+        self.num_ck_box1.setChecked(True)
+        self.num_ck_box2.setChecked(True)
+        self.num_ck_box3.setChecked(True)
+        self.num_ck_box4.setChecked(True)
+
+    #체크박스 체크 여부에 따른 라인처리
+    def Num_Ck_Box1(self, state):
+        if state == Qt.Checked:
+            self.num_line1.setEchoMode(QLineEdit.Normal)
+        else:
+            self.num_line1.setEchoMode(QLineEdit.NoEcho)
+
+    def Num_Ck_Box2(self, state):
+        if state == Qt.Checked:
+            self.num_line2.setEchoMode(QLineEdit.Normal)
+        else:
+            self.num_line2.setEchoMode(QLineEdit.NoEcho)
+
+    def Num_Ck_Box3(self, state):
+        if state == Qt.Checked:
+            self.num_line3.setEchoMode(QLineEdit.Normal)
+        else:
+            self.num_line3.setEchoMode(QLineEdit.NoEcho)
+
+    def Num_Ck_Box4(self, state):
+        if state == Qt.Checked:
+            self.num_line4.setEchoMode(QLineEdit.Normal)
+        else:
+            self.num_line4.setEchoMode(QLineEdit.NoEcho)
+
 
 
 if __name__ == '__main__':
+    q = Queue()
+
+    p = Process(name="producer", target=producer, args=(q, ), daemon=True)
+    p.start()
+
     app = QApplication(sys.argv)
-    mainWindow = MainWindow()
+    mainWindow = MainWindow(q)
     mainWindow.show()
     sys.exit(app.exec_())
