@@ -239,21 +239,194 @@ class MainWindow(QMainWindow):
             self.line8.setEchoMode(QLineEdit.NoEcho)
 
     def Tab2(self):
-        # 버튼 객체 만들기
-        check1 = QCheckBox('체크버튼1', self)
-        check2 = QCheckBox('체크버튼2', self)
-        check3 = QCheckBox('체트버튼3', self)
+        grid = QGridLayout()
 
-        # 레이아웃 만들기
-        vbox = QVBoxLayout()
-        vbox.addWidget(check1)
-        vbox.addWidget(check2)
-        vbox.addWidget(check3)
+        #라벨
+        self.hash_label = QLabel('Input Data')
+        
+        #체크 박스
+        self.hash_ck_box1 = QCheckBox('BASE64', self)
+        self.hash_ck_box2 = QCheckBox('URL-K', self)
+        self.hash_ck_box3 = QCheckBox('URL-E', self)
+        self.hash_ck_box4 = QCheckBox('ASCII', self)
+        self.hash_ck_box5 = QCheckBox('MD5', self)
+        self.hash_ck_box6 = QCheckBox('SHA-1', self)
+        self.hash_ck_box7 = QCheckBox('SHA-256', self)
+        self.hash_ck_box8 = QCheckBox('SHA-512', self)
+
+        self.hash_ck_box1.toggle()
+        self.hash_ck_box2.toggle()
+        self.hash_ck_box3.toggle()
+        self.hash_ck_box4.toggle()
+        self.hash_ck_box5.toggle()
+        self.hash_ck_box6.toggle()
+        self.hash_ck_box7.toggle()
+        self.hash_ck_box8.toggle()
+
+        self.hash_ck_box1.stateChanged.connect(self.Hash_Ck_Box1)
+        self.hash_ck_box2.stateChanged.connect(self.Hash_Ck_Box2)
+        self.hash_ck_box3.stateChanged.connect(self.Hash_Ck_Box3)
+        self.hash_ck_box4.stateChanged.connect(self.Hash_Ck_Box4)
+        self.hash_ck_box5.stateChanged.connect(self.Hash_Ck_Box5)
+        self.hash_ck_box6.stateChanged.connect(self.Hash_Ck_Box6)
+        self.hash_ck_box7.stateChanged.connect(self.Hash_Ck_Box7)
+        self.hash_ck_box8.stateChanged.connect(self.Hash_Ck_Box8)
+
+
+
+        #텍스트 라인
+        self.hash_line1 = QLineEdit()
+        self.hash_line2 = QLineEdit()
+        self.hash_line3 = QLineEdit()
+        self.hash_line4 = QLineEdit()
+        self.hash_line5 = QLineEdit()
+        self.hash_line6 = QLineEdit()
+        self.hash_line7 = QLineEdit()
+        self.hash_line8 = QLineEdit()
+
+        #INPUT TEXT BOX
+        self.hash_input_box = QTextEdit()
+
+        #버튼
+        btn_hash_encoding = QPushButton('encoding',self)
+        btn_hash_decoding = QPushButton('decoding',self)
+        btn_hash_reset = QPushButton('reset', self)
+        
+        btn_hash_encoding.clicked.connect(self.Hash_Encoding_Btn)
+        btn_hash_decoding.clicked.connect(self.Hash_Decoding_Btn)
+        btn_hash_reset.clicked.connect(self.Hash_Reset_Btn)
+
+        #그리드
+        grid.addWidget(self.hash_ck_box1,0,0)
+        grid.addWidget(self.hash_line1,0,1,1,6)
+
+        grid.addWidget(self.hash_ck_box2,1,0)
+        grid.addWidget(self.hash_line2,1,1,1,6)
+
+        grid.addWidget(self.hash_ck_box3,2,0)
+        grid.addWidget(self.hash_line3,2,1,1,6)
+
+        grid.addWidget(self.hash_ck_box4,3,0)
+        grid.addWidget(self.hash_line4,3,1,1,6)
+
+        grid.addWidget(self.hash_ck_box5,4,0)
+        grid.addWidget(self.hash_line5,4,1,1,6)
+        
+        grid.addWidget(self.hash_ck_box6,5,0)
+        grid.addWidget(self.hash_line6,5,1,1,6)
+
+        grid.addWidget(self.hash_ck_box7,6,0)
+        grid.addWidget(self.hash_line7,6,1,1,6)
+
+        grid.addWidget(self.hash_ck_box8,7,0)
+        grid.addWidget(self.hash_line8,7,1,1,6)
+
+        grid.addWidget(self.hash_label,8,0)
+        grid.addWidget(self.hash_input_box,9,0,1,7)
+
+        grid.addWidget(btn_hash_encoding,10,1)
+        grid.addWidget(btn_hash_decoding,10,2)
+        grid.addWidget(btn_hash_reset,10,3)
 
         # 위젯에 레이아웃 추가하기
         tab = QWidget()
-        tab.setLayout(vbox)
+        tab.setLayout(grid)
         return tab
+
+    #인코딩 버튼 이벤트
+    def Hash_Encoding_Btn(self):
+        self.hash_line1.setText(hash.Base64_Encode(self.hash_input_box.toPlainText()))
+        self.hash_line2.setText(hash.Url_Encode_Hangle(self.hash_input_box.toPlainText()))
+        self.hash_line3.setText(hash.Url_Encode_English(self.hash_input_box.toPlainText()))
+        self.hash_line4.setText(hash.Ascii_Encode(self.hash_input_box.toPlainText()))
+        self.hash_line5.setText(hash.MD5_Encode(self.hash_input_box.toPlainText()))
+        self.hash_line6.setText(hash.SHA1_Encode(self.hash_input_box.toPlainText()))
+        self.hash_line7.setText(hash.SHA256_Encode(self.hash_input_box.toPlainText()))
+        self.hash_line8.setText(hash.SHA512_Encode(self.hash_input_box.toPlainText()))
+
+    #디코딩 버튼 이벤트
+    def Hash_Decoding_Btn(self):
+        self.hash_line1.setText(hash.Base64_Decode(self.hash_input_box.toPlainText()))
+        self.hash_line2.setText(hash.Url_Decode_Hangle(self.hash_input_box.toPlainText()))
+        self.hash_line3.setText(hash.Url_Decode_English(self.hash_input_box.toPlainText()))
+        self.hash_line4.setText(hash.Ascii_Decode(self.hash_input_box.toPlainText()))
+        self.hash_line5.setText("")
+        self.hash_line6.setText("")
+        self.hash_line7.setText("")
+        self.hash_line8.setText("")
+
+
+    #리셋 버튼 이벤트
+    def Hash_Reset_Btn(self):
+        self.hash_line1.setText("")
+        self.hash_line2.setText("")
+        self.hash_line3.setText("")
+        self.hash_line4.setText("")
+        self.hash_line5.setText("")
+        self.hash_line6.setText("")
+        self.hash_line7.setText("")
+        self.hash_line8.setText("")
+        self.hash_ck_box1.setChecked(True)
+        self.hash_ck_box2.setChecked(True)
+        self.hash_ck_box3.setChecked(True)
+        self.hash_ck_box4.setChecked(True)
+        self.hash_ck_box5.setChecked(True)
+        self.hash_ck_box6.setChecked(True)
+        self.hash_ck_box7.setChecked(True)
+        self.hash_ck_box8.setChecked(True)
+
+
+    #체크박스 체크 여부에 따른 라인처리
+    def Hash_Ck_Box1(self, state):
+        if state == Qt.Checked:
+            self.hash_line1.setEchoMode(QLineEdit.Normal)
+        else:
+            self.hash_line1.setEchoMode(QLineEdit.NoEcho)
+
+    def Hash_Ck_Box2(self, state):
+        if state == Qt.Checked:
+            self.hash_line2.setEchoMode(QLineEdit.Normal)
+        else:
+            self.hash_line2.setEchoMode(QLineEdit.NoEcho)
+
+    def Hash_Ck_Box3(self, state):
+        if state == Qt.Checked:
+            self.hash_line3.setEchoMode(QLineEdit.Normal)
+        else:
+            self.hash_line3.setEchoMode(QLineEdit.NoEcho)
+
+    def Hash_Ck_Box4(self, state):
+        if state == Qt.Checked:
+            self.hash_line4.setEchoMode(QLineEdit.Normal)
+        else:
+            self.hash_line4.setEchoMode(QLineEdit.NoEcho)
+        
+    def Hash_Ck_Box5(self, state):
+        if state == Qt.Checked:
+            self.hash_line5.setEchoMode(QLineEdit.Normal)
+        else:
+            self.hash_line5.setEchoMode(QLineEdit.NoEcho)
+
+    def Hash_Ck_Box6(self, state):
+        if state == Qt.Checked:
+            self.hash_line6.setEchoMode(QLineEdit.Normal)
+        else:
+            self.hash_line6.setEchoMode(QLineEdit.NoEcho)
+
+    def Hash_Ck_Box7(self, state):
+        if state == Qt.Checked:
+            self.hash_line7.setEchoMode(QLineEdit.Normal)
+        else:
+            self.hash_line7.setEchoMode(QLineEdit.NoEcho)
+
+    def Hash_Ck_Box8(self, state):
+        if state == Qt.Checked:
+            self.hash_line8.setEchoMode(QLineEdit.Normal)
+        else:
+            self.hash_line8.setEchoMode(QLineEdit.NoEcho)
+
+
+
 
     #! 영어 100%가능, 한글 불가능(UTF-8로 디코딩해줘야됨)
     '''def Tab3(self):
@@ -434,7 +607,7 @@ class MainWindow(QMainWindow):
             self.rsa_textbox_data.setText(crypt_1.RSA_PKCS1_v1_5_Encode(self.rsa_textbox_path.toPlainText(),self.rsa_textbox_inputdata.toPlainText()))
         
         elif(self.rsa_cb.currentText() == 'RSA PKCS#1 OAEP'):
-            self.rsa_textbox_data.setText(crypt_1.RSA_OAEP_Encode(self.rsa_textbox_path.toPlainText(),self.rsa_textbox_inputdata.toPlainText()))
+            self.rsa_textrebox_data.setText(crypt_1.RSA_OAEP_Encode(self.rsa_textbox_path.toPlainText(),self.rsa_textbox_inputdata.toPlainText()))
 
     #!RSA 디코딩 버튼 이벤트
     def RSA_decode(self):

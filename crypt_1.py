@@ -161,8 +161,8 @@ def Read_Pub_Key(path):
     read_pub_key = f.read()
 
     read_pub_key = str(read_pub_key)
-    read_pub_key = read_pub_key.replace("b'-----BEGIN RSA PRIVATE KEY-----","")
-    read_pub_key = read_pub_key.replace("-----END RSA PRIVATE KEY-----'","")
+    read_pub_key = read_pub_key.replace("b'-----BEGIN PUBLIC KEY-----","")
+    read_pub_key = read_pub_key.replace("-----END PUBLIC KEY-----'","")
     read_pub_key = read_pub_key.replace("\\n","")
     
     f.close()

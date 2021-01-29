@@ -2,60 +2,6 @@ import hashlib
 import base64
 from urllib import parse
 
-def Bin_Number(data):
-    try:
-        if ' ' in data:
-            list_data = data.split(' ')
-            bin_dump = list()
-
-            for i in list_data:
-                bin_dump.append(bin(int(i)))
-
-            bin_num_list = " ".join(bin_dump)
-            return bin_num_list
-        else:
-            bin_num = bin(int(data))
-            return bin_num
-    except BaseException:
-        pass
-
-
-def Oct_Number(data):
-    try:
-        if ' ' in data:
-            list_data = data.split(' ')
-            oct_dump = list()
-
-            for i in list_data:
-                oct_dump.append(oct(int(i)))
-
-            oct_num_list = " ".join(oct_dump)
-            return oct_num_list
-        else:
-            oct_num = oct(int(data))
-            return oct_num
-    except BaseException:
-        pass
-
-
-def Hex_Number(data):
-    try:
-        if ' ' in data:
-            list_data = data.split(' ')
-            hex_dump = list()
-
-            for i in list_data:
-                hex_dump.append(hex(int(i)))
-
-            hex_num_list = " ".join(hex_dump)
-            return hex_num_list
-        else:
-            hex_num = hex(int(data))
-            return hex_num
-    except BaseException:
-        pass
-
-
 def Base64_Encode(data):
     e_code = base64.b64encode(data.encode("UTF-8"))
     base_encode = e_code.decode("UTF-8")
