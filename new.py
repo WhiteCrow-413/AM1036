@@ -63,7 +63,6 @@ class MainWindow(QMainWindow):
         #tabs.addTab(self.Tab3(), 'DEFENDER') -> 나중에 풀 것
         tabs.addTab(self.Tab4(), 'CEASAR')
         tabs.addTab(self.Tab5(), 'RSA')
-        tabs.addTab(self.Tab6(), 'NUM')
 
         # QMainWindow 추가
         self.setCentralWidget(tabs)
@@ -72,172 +71,137 @@ class MainWindow(QMainWindow):
     def Tab1(self):
         grid = QGridLayout()
 
-        # 변수 선언 부분
-        self.ck_box1 = QCheckBox('2진수', self)
-        self.ck_box2 = QCheckBox('8진수', self)
-        self.ck_box3 = QCheckBox('10진수', self)
-        self.ck_box4 = QCheckBox('16진수', self)
-        self.ck_box5 = QCheckBox('BASE64', self)
-        self.ck_box6 = QCheckBox('URL(E)', self)
-        self.ck_box7 = QCheckBox('URL(H)', self)
-        self.ck_box8 = QCheckBox('ASCII', self)
+        self.num_ck_box1 = QCheckBox('2진수', self)
+        self.num_ck_box2 = QCheckBox('8진수', self)        
+        self.num_ck_box3 = QCheckBox('10진수', self)
+        self.num_ck_box4 = QCheckBox('16진수', self)
 
-        self.line1 = QLineEdit()
-        self.line2 = QLineEdit()
-        self.line3 = QLineEdit()
-        self.line4 = QLineEdit()
-        self.line5 = QLineEdit()
-        self.line6 = QLineEdit()
-        self.line7 = QLineEdit()
-        self.line8 = QLineEdit()
+        self.num_ck_box1.toggle()
+        self.num_ck_box2.toggle()
+        self.num_ck_box3.toggle()
+        self.num_ck_box4.toggle()
 
-        self.label_text = QLabel('INPUT DATA')
-        self.input_box = QTextEdit(self)
+        self.num_ck_box1.stateChanged.connect(self.Num_Ck_Box1)
+        self.num_ck_box2.stateChanged.connect(self.Num_Ck_Box2)
+        self.num_ck_box3.stateChanged.connect(self.Num_Ck_Box3)
+        self.num_ck_box4.stateChanged.connect(self.Num_Ck_Box4)
 
-        btn_incoding = QPushButton('INCODING', self)
-        btn_decoding = QPushButton('DECODING', self)
-        btn_reset = QPushButton('RESET', self)
-        # 버튼 클릭 이벤트
-        btn_incoding.clicked.connect(self.Incoding_Btn)
-        btn_decoding.clicked.connect(self.Decoding_Btn)
-        btn_reset.clicked.connect(self.Reset_Btn)
+        
+        #라인
+        self.num_line1 = QLineEdit()
+        self.num_line2 = QLineEdit()
+        self.num_line3 = QLineEdit()
+        self.num_line4 = QLineEdit()
 
-        self.ck_box1.toggle()
-        self.ck_box2.toggle()
-        self.ck_box3.toggle()
-        self.ck_box4.toggle()
-        self.ck_box5.toggle()
-        self.ck_box6.toggle()
-        self.ck_box7.toggle()
-        self.ck_box8.toggle()
+        #입력 박스
+        self.num_label_text = QLabel('INPUT DATA')
+        self.num_input_box = QTextEdit(self)
 
-        self.ck_box1.stateChanged.connect(self.changeBox1)
-        self.ck_box2.stateChanged.connect(self.changeBox2)
-        self.ck_box3.stateChanged.connect(self.changeBox3)
-        self.ck_box4.stateChanged.connect(self.changeBox4)
-        self.ck_box5.stateChanged.connect(self.changeBox5)
-        self.ck_box6.stateChanged.connect(self.changeBox6)
-        self.ck_box7.stateChanged.connect(self.changeBox7)
-        self.ck_box8.stateChanged.connect(self.changeBox8)
 
-        # 실제 그리드 작업 부분
-        grid.addWidget(self.ck_box1, 0,0)
-        grid.addWidget(self.ck_box2, 1,0)
-        grid.addWidget(self.ck_box3, 2,0)
-        grid.addWidget(self.ck_box4, 3,0)
-        grid.addWidget(self.ck_box5, 4,0)
-        grid.addWidget(self.ck_box6, 5,0)
-        grid.addWidget(self.ck_box7, 6,0)
-        grid.addWidget(self.ck_box8, 7,0)
+        #버튼
+        btn_num_incoding = QPushButton('INCODING',self)
+        btn_num_reset = QPushButton('RESET', self)
 
-        grid.addWidget(self.line1, 0, 1, 1, 6)
-        grid.addWidget(self.line2, 1, 1, 1, 6)
-        grid.addWidget(self.line3, 2, 1, 1, 6)
-        grid.addWidget(self.line4, 3, 1, 1, 6)
-        grid.addWidget(self.line5, 4, 1, 1, 6)
-        grid.addWidget(self.line6, 5, 1, 1, 6)
-        grid.addWidget(self.line7, 6, 1, 1, 6)
-        grid.addWidget(self.line8, 7, 1, 1, 6)
+        btn_num_incoding.clicked.connect(self.Num_Incoding_Btn)
+        btn_num_reset.clicked.connect(self.Num_Reset_Btn)
 
-        grid.addWidget(self.label_text, 8, 0, 1, 0)
-        grid.addWidget(self.input_box, 9, 0, 1, 7) # !왜 7인지 모르겠음
+        #콤보 박스 (입력 진수 선택)
+        self.num_cb = QComboBox(self)
+        self.num_cb.addItem('10진수')
+        self.num_cb.addItem('2진수')
+        self.num_cb.addItem('8진수')
+        self.num_cb.addItem('16진수')
 
-        grid.addWidget(btn_incoding, 10, 1)
-        grid.addWidget(btn_decoding, 10, 2)
-        grid.addWidget(btn_reset,10, 3)
+        #그리드
+        grid.addWidget(self.num_cb, 0,0,1,7)
 
-        # 위젯에 레이아웃 추가하기
+        grid.addWidget(self.num_ck_box1,1,0)
+        grid.addWidget(self.num_line1,1,1,1,6)
+        
+        grid.addWidget(self.num_ck_box2,2,0)
+        grid.addWidget(self.num_line2,2,1,1,6)
+
+        grid.addWidget(self.num_ck_box3,3,0)
+        grid.addWidget(self.num_line3,3,1,1,6)
+        
+        grid.addWidget(self.num_ck_box4,4,0)
+        grid.addWidget(self.num_line4,4,1,1,6)
+
+        grid.addWidget(self.num_label_text,5,0)
+        grid.addWidget(self.num_input_box,6,0,1,7)
+
+        grid.addWidget(btn_num_incoding,9,2)
+        grid.addWidget(btn_num_reset,9,3)
+
+
         tab = QWidget()
         tab.setLayout(grid)
         return tab
-    
-    def Incoding_Btn(self):
-        hash.Bin_Number(self.input_box.toPlainText())
-        self.line1.setText(hash.Bin_Number(self.input_box.toPlainText()))
-        hash.Oct_Number(self.input_box.toPlainText())
-        self.line2.setText(hash.Oct_Number(self.input_box.toPlainText()))
-        # 3번 자리
-        hash.Hex_Number(self.input_box.toPlainText())
-        self.line4.setText(hash.Hex_Number(self.input_box.toPlainText()))
-        hash.Base64_Encode(self.input_box.toPlainText())
-        self.line5.setText(hash.Base64_Encode(self.input_box.toPlainText()))
-        hash.Url_Encode_English(self.input_box.toPlainText())
-        self.line6.setText(hash.Url_Encode_English(self.input_box.toPlainText()))
-        hash.Url_Encode_Hangle(self.input_box.toPlainText())
-        self.line7.setText(hash.Url_Encode_Hangle(self.input_box.toPlainText()))
-        hash.Ascii_Encode(self.input_box.toPlainText())
-        self.line8.setText(hash.Ascii_Encode(self.input_box.toPlainText()))
+
+    #넘버 인코딩 버튼
+    #! 입력 진수 선택에 따라서 if문 설정 및 체크 박스 상태 확인
+    def Num_Incoding_Btn(self):
+        if(self.num_cb.currentText() == '10진수'):
+            self.num_line1.setText(Number.Bin_Number_DEC(self.num_input_box.toPlainText()))
+            self.num_line2.setText(Number.Oct_Number_DEC(self.num_input_box.toPlainText()))
+            self.num_line3.setText("")
+            self.num_line4.setText(Number.Hex_Number_DEC(self.num_input_box.toPlainText()))
+
+        elif(self.num_cb.currentText() == '2진수'):
+            self.num_line1.setText("")
+            self.num_line2.setText(Number.Oct_Number_BIN(self.num_input_box.toPlainText()))
+            self.num_line3.setText(Number.Dec_Number_BIN(self.num_input_box.toPlainText()))
+            self.num_line4.setText(Number.Hex_Number_BIN(self.num_input_box.toPlainText()))
         
-    def Decoding_Btn(self):
-        hash.Base64_Decode(self.input_box.toPlainText())
-        self.line5.setText(hash.Base64_Decode(self.input_box.toPlainText()))
-        hash.Url_Decode_English(self.input_box.toPlainText())
-        self.line6.setText(hash.Url_Decode_English(self.input_box.toPlainText()))
-        hash.Url_Decode_Hangle(self.input_box.toPlainText())
-        self.line7.setText(hash.Url_Decode_Hangle(self.input_box.toPlainText()))
-        hash.Ascii_Decode(self.input_box.toPlainText())
-        self.line8.setText(hash.Ascii_Decode(self.input_box.toPlainText()))
+        elif(self.num_cb.currentText() == '8진수'):
+            self.num_line1.setText(Number.Bin_Number_OCT(self.num_input_box.toPlainText()))
+            self.num_line2.setText("")
+            self.num_line3.setText(Number.Dec_Number_OCT(self.num_input_box.toPlainText()))
+            self.num_line4.setText(Number.Hex_Number_OCT(self.num_input_box.toPlainText()))
+        
+        elif(self.num_cb.currentText() == '16진수'):
+            self.num_line1.setText(Number.Bin_Number_HEX(self.num_input_box.toPlainText()))
+            self.num_line2.setText(Number.Oct_Number_HEX(self.num_input_box.toPlainText()))
+            self.num_line3.setText(Number.Dec_Number_HEX(self.num_input_box.toPlainText()))
+            self.num_line4.setText("")
 
-    #! 누를때 교차현상 수정(누르면 다 초기화되고 다시 체크박스 on되도록)
-    def Reset_Btn(self):
-        self.line1.setText("")
-        self.line2.setText("")
-        self.line3.setText("")
-        self.line4.setText("")
-        self.line5.setText("")
-        self.line6.setText("")
-        self.line7.setText("")
-        self.line8.setText("")
-        self.input_box.setText("")
 
-    def changeBox1(self, state):
+    #넘버 리셋 버튼 (체크 박스 모두 선택으로 변경 및 값 초기화)
+    def Num_Reset_Btn(self):
+        self.num_line1.setText("")
+        self.num_line2.setText("")
+        self.num_line3.setText("")
+        self.num_line4.setText("")
+        self.num_input_box.setText("")
+        self.num_ck_box1.setChecked(True)
+        self.num_ck_box2.setChecked(True)
+        self.num_ck_box3.setChecked(True)
+        self.num_ck_box4.setChecked(True)
+
+    #체크박스 체크 여부에 따른 라인처리
+    def Num_Ck_Box1(self, state):
         if state == Qt.Checked:
-            self.line1.setEchoMode(QLineEdit.Normal)
+            self.num_line1.setEchoMode(QLineEdit.Normal)
         else:
-            self.line1.setEchoMode(QLineEdit.NoEcho)
+            self.num_line1.setEchoMode(QLineEdit.NoEcho)
 
-    def changeBox2(self, state):
+    def Num_Ck_Box2(self, state):
         if state == Qt.Checked:
-            self.line2.setEchoMode(QLineEdit.Normal)
+            self.num_line2.setEchoMode(QLineEdit.Normal)
         else:
-            self.line2.setEchoMode(QLineEdit.NoEcho)
+            self.num_line2.setEchoMode(QLineEdit.NoEcho)
 
-    def changeBox3(self, state):
+    def Num_Ck_Box3(self, state):
         if state == Qt.Checked:
-            self.line3.setEchoMode(QLineEdit.Normal)
+            self.num_line3.setEchoMode(QLineEdit.Normal)
         else:
-            self.line3.setEchoMode(QLineEdit.NoEcho)
+            self.num_line3.setEchoMode(QLineEdit.NoEcho)
 
-    def changeBox4(self, state):
+    def Num_Ck_Box4(self, state):
         if state == Qt.Checked:
-            self.line4.setEchoMode(QLineEdit.Normal)
+            self.num_line4.setEchoMode(QLineEdit.Normal)
         else:
-            self.line4.setEchoMode(QLineEdit.NoEcho)
-
-    def changeBox5(self, state):
-        if state == Qt.Checked:
-            self.line5.setEchoMode(QLineEdit.Normal)
-        else:
-            self.line5.setEchoMode(QLineEdit.NoEcho)
-
-    def changeBox6(self, state):
-        if state == Qt.Checked:
-            self.line6.setEchoMode(QLineEdit.Normal)
-        else:
-            self.line6.setEchoMode(QLineEdit.NoEcho)
-
-    def changeBox7(self, state):
-        if state == Qt.Checked:
-            self.line7.setEchoMode(QLineEdit.Normal)
-        else:
-            self.line7.setEchoMode(QLineEdit.NoEcho)
-
-    def changeBox8(self, state):
-        if state == Qt.Checked:
-            self.line8.setEchoMode(QLineEdit.Normal)
-        else:
-            self.line8.setEchoMode(QLineEdit.NoEcho)
-
+            self.num_line4.setEchoMode(QLineEdit.NoEcho)
     def Tab2(self):
         grid = QGridLayout()
 
@@ -629,142 +593,6 @@ class MainWindow(QMainWindow):
     #!RSA readme 버튼 이벤트 (다이얼로그 사용해야 함)
     def RSA_readme(self):
         print(4)
-
-    #2,8,10,16진수 탭
-    def Tab6(self):
-        grid = QGridLayout()
-
-        self.num_ck_box1 = QCheckBox('2진수', self)
-        self.num_ck_box2 = QCheckBox('8진수', self)        
-        self.num_ck_box3 = QCheckBox('10진수', self)
-        self.num_ck_box4 = QCheckBox('16진수', self)
-
-        self.num_ck_box1.toggle()
-        self.num_ck_box2.toggle()
-        self.num_ck_box3.toggle()
-        self.num_ck_box4.toggle()
-
-        self.num_ck_box1.stateChanged.connect(self.Num_Ck_Box1)
-        self.num_ck_box2.stateChanged.connect(self.Num_Ck_Box2)
-        self.num_ck_box3.stateChanged.connect(self.Num_Ck_Box3)
-        self.num_ck_box4.stateChanged.connect(self.Num_Ck_Box4)
-
-        
-        #라인
-        self.num_line1 = QLineEdit()
-        self.num_line2 = QLineEdit()
-        self.num_line3 = QLineEdit()
-        self.num_line4 = QLineEdit()
-
-        #입력 박스
-        self.num_label_text = QLabel('INPUT DATA')
-        self.num_input_box = QTextEdit(self)
-
-
-        #버튼
-        btn_num_incoding = QPushButton('INCODING',self)
-        btn_num_reset = QPushButton('RESET', self)
-
-        btn_num_incoding.clicked.connect(self.Num_Incoding_Btn)
-        btn_num_reset.clicked.connect(self.Num_Reset_Btn)
-
-        #콤보 박스 (입력 진수 선택)
-        self.num_cb = QComboBox(self)
-        self.num_cb.addItem('10진수')
-        self.num_cb.addItem('2진수')
-        self.num_cb.addItem('8진수')
-        self.num_cb.addItem('16진수')
-
-        #그리드
-        grid.addWidget(self.num_cb, 0,0,1,7)
-
-        grid.addWidget(self.num_ck_box1,1,0)
-        grid.addWidget(self.num_line1,1,1,1,6)
-        
-        grid.addWidget(self.num_ck_box2,2,0)
-        grid.addWidget(self.num_line2,2,1,1,6)
-
-        grid.addWidget(self.num_ck_box3,3,0)
-        grid.addWidget(self.num_line3,3,1,1,6)
-        
-        grid.addWidget(self.num_ck_box4,4,0)
-        grid.addWidget(self.num_line4,4,1,1,6)
-
-        grid.addWidget(self.num_label_text,5,0)
-        grid.addWidget(self.num_input_box,6,0,1,7)
-
-        grid.addWidget(btn_num_incoding,9,2)
-        grid.addWidget(btn_num_reset,9,3)
-
-
-        tab = QWidget()
-        tab.setLayout(grid)
-        return tab
-
-    #넘버 인코딩 버튼
-    #! 입력 진수 선택에 따라서 if문 설정 및 체크 박스 상태 확인
-    def Num_Incoding_Btn(self):
-        if(self.num_cb.currentText() == '10진수'):
-            self.num_line1.setText(Number.Bin_Number_DEC(self.num_input_box.toPlainText()))
-            self.num_line2.setText(Number.Oct_Number_DEC(self.num_input_box.toPlainText()))
-            self.num_line3.setText("")
-            self.num_line4.setText(Number.Hex_Number_DEC(self.num_input_box.toPlainText()))
-
-        elif(self.num_cb.currentText() == '2진수'):
-            self.num_line1.setText("")
-            self.num_line2.setText(Number.Oct_Number_BIN(self.num_input_box.toPlainText()))
-            self.num_line3.setText(Number.Dec_Number_BIN(self.num_input_box.toPlainText()))
-            self.num_line4.setText(Number.Hex_Number_BIN(self.num_input_box.toPlainText()))
-        
-        elif(self.num_cb.currentText() == '8진수'):
-            self.num_line1.setText(Number.Bin_Number_OCT(self.num_input_box.toPlainText()))
-            self.num_line2.setText("")
-            self.num_line3.setText(Number.Dec_Number_OCT(self.num_input_box.toPlainText()))
-            self.num_line4.setText(Number.Hex_Number_OCT(self.num_input_box.toPlainText()))
-        
-        elif(self.num_cb.currentText() == '16진수'):
-            self.num_line1.setText(Number.Bin_Number_HEX(self.num_input_box.toPlainText()))
-            self.num_line2.setText(Number.Oct_Number_HEX(self.num_input_box.toPlainText()))
-            self.num_line3.setText(Number.Dec_Number_HEX(self.num_input_box.toPlainText()))
-            self.num_line4.setText("")
-
-
-    #넘버 리셋 버튼 (체크 박스 모두 선택으로 변경 및 값 초기화)
-    def Num_Reset_Btn(self):
-        self.num_line1.setText("")
-        self.num_line2.setText("")
-        self.num_line3.setText("")
-        self.num_line4.setText("")
-        self.num_input_box.setText("")
-        self.num_ck_box1.setChecked(True)
-        self.num_ck_box2.setChecked(True)
-        self.num_ck_box3.setChecked(True)
-        self.num_ck_box4.setChecked(True)
-
-    #체크박스 체크 여부에 따른 라인처리
-    def Num_Ck_Box1(self, state):
-        if state == Qt.Checked:
-            self.num_line1.setEchoMode(QLineEdit.Normal)
-        else:
-            self.num_line1.setEchoMode(QLineEdit.NoEcho)
-
-    def Num_Ck_Box2(self, state):
-        if state == Qt.Checked:
-            self.num_line2.setEchoMode(QLineEdit.Normal)
-        else:
-            self.num_line2.setEchoMode(QLineEdit.NoEcho)
-
-    def Num_Ck_Box3(self, state):
-        if state == Qt.Checked:
-            self.num_line3.setEchoMode(QLineEdit.Normal)
-        else:
-            self.num_line3.setEchoMode(QLineEdit.NoEcho)
-
-    def Num_Ck_Box4(self, state):
-        if state == Qt.Checked:
-            self.num_line4.setEchoMode(QLineEdit.Normal)
-        else:
-            self.num_line4.setEchoMode(QLineEdit.NoEcho)
 
 
 
