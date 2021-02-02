@@ -509,9 +509,9 @@ class MainWindow(QMainWindow):
         
         
 
-    #!RSA readme 버튼 이벤트 (다이얼로그 사용해야 함)
+    #!RSA readme 버튼 이벤트 (내용 변경 필요)
     def RSA_readme(self):
-        msg = "asdafdfadsadafsdfsdfsdfssdfsfdsfasdfaf"
+        msg = "ㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁ"
         title = "readme"
         msg_box = QMessageBox(self)
         msg_box.question(self, title, msg, QMessageBox.Ok)
