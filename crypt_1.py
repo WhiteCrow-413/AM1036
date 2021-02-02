@@ -123,83 +123,103 @@ def Symmetric_Decrypt(data, data_list): #얘가 암호화냐 복호화냐...
 - '''
 
 def Create_Key(path): #개인 키 생성 후 파일에 저장
-    random_generator = Random.new().read
-    key = RSA.generate(1024, random_generator)
-    private_key = key.export_key()
+    try:
+        random_generator = Random.new().read
+        key = RSA.generate(1024, random_generator)
+        private_key = key.export_key()
 
-    f = open(path+"private.pem",'wb')
-    f.write(private_key)
+        f = open(path+"private.pem",'wb')
+        f.write(private_key)
 
-    f.close()
+        f.close()
 
-    public_key = key.publickey().export_key()
+        public_key = key.publickey().export_key()
 
-    f = open(path+"public.pem",'wb')
-    f.write(public_key)
+        f = open(path+"public.pem",'wb')
+        f.write(public_key)
 
-    f.close()
+        f.close()
+
+    except BaseException:
+        pass
 
 
+    
 #개인키 값 리턴하는 함수
 def Read_Pri_Key(path):
-    f = open(path+"private.pem",'rb')
+    try:
+        f = open(path+"private.pem",'rb')
     
-    read_pri_key = f.read()
+        read_pri_key = f.read()
     
-    read_pri_key = str(read_pri_key)
-    read_pri_key = read_pri_key.replace("b'-----BEGIN RSA PRIVATE KEY-----","")
-    read_pri_key = read_pri_key.replace("-----END RSA PRIVATE KEY-----'","")
-    read_pri_key = read_pri_key.replace("\\n","")
-    f.close()
+        read_pri_key = str(read_pri_key)
+        read_pri_key = read_pri_key.replace("b'-----BEGIN RSA PRIVATE KEY-----","")
+        read_pri_key = read_pri_key.replace("-----END RSA PRIVATE KEY-----'","")
+        read_pri_key = read_pri_key.replace("\\n","")
+        f.close()
 
-    return read_pri_key
+        return read_pri_key
+
+    except BaseException:
+        pass
+
+
 
 #공개키 값 리턴하는 함수
 def Read_Pub_Key(path):
-    f = open(path+"public.pem",'rb')
+    try:    
+        f = open(path+"public.pem",'rb')
 
-    read_pub_key = f.read()
+        read_pub_key = f.read()
 
-    read_pub_key = str(read_pub_key)
-    read_pub_key = read_pub_key.replace("b'-----BEGIN PUBLIC KEY-----","")
-    read_pub_key = read_pub_key.replace("-----END PUBLIC KEY-----'","")
-    read_pub_key = read_pub_key.replace("\\n","")
+        read_pub_key = str(read_pub_key)
+        read_pub_key = read_pub_key.replace("b'-----BEGIN PUBLIC KEY-----","")
+        read_pub_key = read_pub_key.replace("-----END PUBLIC KEY-----'","")
+        read_pub_key = read_pub_key.replace("\\n","")
     
-    f.close()
+        f.close()
 
-    return read_pub_key
+        return read_pub_key
+    
+    except BaseException:
+        pass
+
 
     
 #여기 암호화 참고 : https://pycryptodome.readthedocs.io/en/latest/src/examples.html#generate-an-rsa-key
 #여기 복호화 참고2 : https://comdoc.tistory.com/entry/%ED%8C%8C%EC%9D%B4%EC%8D%AC-%EC%95%94%ED%98%B8%ED%99%94
 def RSA_PKCS1_v1_5_Encode(path,data):
-    pub_key = RSA.import_key(open(path+"public.pem").read())
+    try:   
+        pub_key = RSA.import_key(open(path+"public.pem").read())
 
-    cipher = Cipher_pkcs1_v1_5.new(pub_key)
-    msg = data.encode('utf-8')
+        cipher = Cipher_pkcs1_v1_5.new(pub_key)
+        msg = data.encode('utf-8')
 
-    default_encrypt_length = 245
-    length = default_encrypt_length
+        default_encrypt_length = 245
+        length = default_encrypt_length
 
-    msg_list = [msg[i:i + length] for i in list(range(0,len(msg), length))]
-    encrypt_msg_list = []
-    encrypt_msg = []
+        msg_list = [msg[i:i + length] for i in list(range(0,len(msg), length))]
+        encrypt_msg_list = []
+        encrypt_msg = []
 
-    for msg_str in msg_list:
-        cipher_text = base64.b64encode(cipher.encrypt(msg_str))
-        encrypt_msg_list.append(cipher_text)
+        for msg_str in msg_list:
+            cipher_text = base64.b64encode(cipher.encrypt(msg_str))
+            encrypt_msg_list.append(cipher_text)
         
     
-    f = open(path + "encrypted_data.txt",'wb')
+        f = open(path + "encrypted_data.txt",'wb')
 
-    for i in encrypt_msg_list:
-        f.write(i)
+        for i in encrypt_msg_list:
+            f.write(i)
 
-    f.close()
-    encrypt_msg = "".join(str(encrypt_msg_list)).replace("[b'","")
-    encrypt_msg = encrypt_msg.replace("']","")
+        f.close()
+        encrypt_msg = "".join(str(encrypt_msg_list)).replace("[b'","")
+        encrypt_msg = encrypt_msg.replace("']","")
 
-    return encrypt_msg
+        return encrypt_msg
+
+    except BaseException:
+        pass
 
 def RSA_PKCS1_v1_5_Decode(path):
     try:
@@ -229,22 +249,27 @@ def RSA_PKCS1_v1_5_Decode(path):
 #################################################################
 #여기 아래로는 암호문으로 자주 사용되는 PKCS-OAEP방식
 def RSA_OAEP_Encode(path, data):
-    data_utf = data.encode('utf-8')
-    public_key = RSA.importKey(open('public.pem').read())
-    cipher = PKCS1_OAEP.new(public_key)
-    cipher_text = base64.b64encode(cipher.encrypt(data_utf))
+    try:
+        data_utf = data.encode('utf-8')
+        public_key = RSA.importKey(open('public.pem').read())
+        cipher = PKCS1_OAEP.new(public_key)
+        cipher_text = base64.b64encode(cipher.encrypt(data_utf))
     
 
-    f = open(path + "encrypted_data.txt",'wb')
+        f = open(path + "encrypted_data.txt",'wb')
 
-    f.write(cipher_text)
+        f.write(cipher_text)
 
-    f.close()
+        f.close()
 
-    encypt_msg = str(cipher_text).replace("b'","")
-    encypt_msg = encypt_msg.replace("'","")
+        encypt_msg = str(cipher_text).replace("b'","")
+        encypt_msg = encypt_msg.replace("'","")
 
-    return encypt_msg
+        return encypt_msg
+
+    except BaseException:
+        pass
+
 
 def RSA_OAEP_Decode(path):
     try:

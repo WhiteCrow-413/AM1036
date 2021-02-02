@@ -490,7 +490,7 @@ class MainWindow(QMainWindow):
             self.rsa_textbox_data.setText(crypt_1.RSA_PKCS1_v1_5_Encode(self.rsa_textbox_path.toPlainText(),self.rsa_textbox_inputdata.toPlainText()))
         
         elif(self.rsa_cb.currentText() == 'RSA PKCS#1 OAEP'):
-            self.rsa_textrebox_data.setText(crypt_1.RSA_OAEP_Encode(self.rsa_textbox_path.toPlainText(),self.rsa_textbox_inputdata.toPlainText()))
+            self.rsa_textbox_data.setText(crypt_1.RSA_OAEP_Encode(self.rsa_textbox_path.toPlainText(),self.rsa_textbox_inputdata.toPlainText()))
 
     # RSA 디코딩 버튼 이벤트
     def RSA_decode(self):
@@ -511,7 +511,10 @@ class MainWindow(QMainWindow):
 
     #!RSA readme 버튼 이벤트 (다이얼로그 사용해야 함)
     def RSA_readme(self):
-        print(4)
+        msg = "asdafdfadsadafsdfsdfsdfssdfsfdsfasdfaf"
+        title = "readme"
+        msg_box = QMessageBox(self)
+        msg_box.question(self, title, msg, QMessageBox.Ok)
 
     # 경로 이벤트 버튼
     def RSA_Path_Btn(self):
