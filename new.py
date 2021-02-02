@@ -1,4 +1,4 @@
-from os import name
+from os import name, read
 import sys
 import hash
 import crypt_1 #시저, 대칭, RSA 모듈(이름 변경 필요)
@@ -60,9 +60,9 @@ class MainWindow(QMainWindow):
         tabs = QTabWidget()
         tabs.addTab(self.Tab1(), 'NUM')
         tabs.addTab(self.Tab2(), 'HASH')
-        #tabs.addTab(self.Tab3(), 'DEFENDER') -> 나중에 풀 것
-        tabs.addTab(self.Tab4(), 'CEASAR')
-        tabs.addTab(self.Tab5(), 'RSA')
+        tabs.addTab(self.Tab3(), 'CEASAR')
+        tabs.addTab(self.Tab4(), 'RSA')
+        #tabs.addTab(self.Tab5(), 'DEFENDER') -> 나중에 풀 것
 
         # QMainWindow 추가
         self.setCentralWidget(tabs)
@@ -139,7 +139,6 @@ class MainWindow(QMainWindow):
         return tab
 
     #넘버 인코딩 버튼
-    #! 입력 진수 선택에 따라서 if문 설정 및 체크 박스 상태 확인
     def Num_Incoding_Btn(self):
         if(self.num_cb.currentText() == '10진수'):
             self.num_line1.setText(Number.Bin_Number_DEC(self.num_input_box.toPlainText()))
@@ -392,6 +391,135 @@ class MainWindow(QMainWindow):
 
 
 
+
+    def Tab3(self):
+        grid = QGridLayout()
+        
+        self.dump_label = QLabel(self)
+        self.ceasar_text_box = QTextEdit()
+        self.ceasar_input_line = QLineEdit()
+
+        btn_ceasar_encoding = QPushButton('encoding', self)
+
+        btn_ceasar_encoding.clicked.connect(self.Ceasar_encode)
+
+        self.spinbox = QSpinBox()
+        self.spinbox.setRange(-25,25)
+        self.spinbox.setSingleStep(1)
+
+        grid.addWidget(self.ceasar_text_box, 0,0,1,0)
+        grid.addWidget(self.spinbox, 1, 0, 1,0)
+        grid.addWidget(self.ceasar_input_line,2,0)
+        grid.addWidget(btn_ceasar_encoding,2,1)
+
+        
+
+        tab = QWidget()
+        tab.setLayout(grid)
+        return tab
+
+    #시저 암호 인코딩 버튼 이벤트
+    def Ceasar_encode(self):
+        self.ceasar_text_box.setText(crypt_1.Ceasar_Crypt(self.ceasar_input_line.text(),self.spinbox.value()))
+
+
+
+
+
+    #Tab4 RSA
+    def Tab4(self):
+        grid = QGridLayout()
+
+        self.rsa_label1 = QLabel('data', self)
+        self.rsa_label2 = QLabel('private key', self)
+        self.rsa_label3 = QLabel('public key',self)
+        self.rsa_label4 = QLabel('path',self)
+        self.rsa_label5 = QLabel('input data',self)
+
+        self.rsa_textbox_data = QTextEdit()
+        self.rsa_textbox_prikey = QTextEdit()
+        self.rsa_textbox_pubkey = QTextEdit()
+        self.rsa_textbox_path = QTextEdit()
+        self.rsa_textbox_inputdata = QTextEdit()
+
+        btn_rsa_readme = QPushButton('readme', self)
+        btn_rsa_createkey = QPushButton('create key', self)
+        btn_rsa_encoding = QPushButton('encoding', self)
+        btn_rsa_decoding = QPushButton('decoding', self)
+        btn_rsa_path = QPushButton('path',self)
+
+
+        self.rsa_cb = QComboBox(self)
+        self.rsa_cb.addItem('RSA PKCS#1 v1.5')
+        self.rsa_cb.addItem('RSA PKCS#1 OAEP')
+
+        btn_rsa_readme.clicked.connect(self.RSA_readme)
+        btn_rsa_createkey.clicked.connect(self.RSA_createkey)
+        btn_rsa_encoding.clicked.connect(self.RSA_encode)
+        btn_rsa_decoding.clicked.connect(self.RSA_decode)
+        btn_rsa_path.clicked.connect(self.RSA_Path_Btn)
+
+        grid.addWidget(self.rsa_cb,0,0,1,4)
+
+        grid.addWidget(self.rsa_label1,1,0,1,4)
+        grid.addWidget(self.rsa_textbox_data,2,0,1,4)
+
+        grid.addWidget(self.rsa_label2,3,0,1,2)
+        grid.addWidget(self.rsa_label3,3,2,1,2)
+        grid.addWidget(self.rsa_textbox_prikey,4,0,1,2)
+        grid.addWidget(self.rsa_textbox_pubkey,4,2,1,2)
+
+        grid.addWidget(btn_rsa_path,5,0,1,2)
+        grid.addWidget(self.rsa_label5,5,2,1,2)
+        grid.addWidget(self.rsa_textbox_path,6,0,1,2)
+        grid.addWidget(self.rsa_textbox_inputdata,6,2,1,2)
+
+        grid.addWidget(btn_rsa_readme,7,0,1,1)
+        grid.addWidget(btn_rsa_createkey,7,1,1,1)
+        grid.addWidget(btn_rsa_encoding,7,2,1,1)
+        grid.addWidget(btn_rsa_decoding,7,3,1,1)
+
+
+        tab = QWidget()
+        tab.setLayout(grid)
+        return tab
+
+    # RSA 인코딩 버튼 이벤트 
+    def RSA_encode(self):
+        if(self.rsa_cb.currentText() == 'RSA PKCS#1 v1.5'):
+            self.rsa_textbox_data.setText(crypt_1.RSA_PKCS1_v1_5_Encode(self.rsa_textbox_path.toPlainText(),self.rsa_textbox_inputdata.toPlainText()))
+        
+        elif(self.rsa_cb.currentText() == 'RSA PKCS#1 OAEP'):
+            self.rsa_textrebox_data.setText(crypt_1.RSA_OAEP_Encode(self.rsa_textbox_path.toPlainText(),self.rsa_textbox_inputdata.toPlainText()))
+
+    # RSA 디코딩 버튼 이벤트
+    def RSA_decode(self):
+        if(self.rsa_cb.currentText() == 'RSA PKCS#1 v1.5'):
+            self.rsa_textbox_data.setText(crypt_1.RSA_PKCS1_v1_5_Decode(self.rsa_textbox_path.toPlainText()))
+
+        elif(self.rsa_cb.currentText() == 'RSA PKCS#1 OAEP'):
+            self.rsa_textbox_data.setText(crypt_1.RSA_OAEP_Decode(self.rsa_textbox_path.toPlainText()))
+
+    #!RSA 키생성 버튼 이벤트 (메세지박스 크기 조절 필요! : 텍스트나 라벨의 크기를 조정한 후 메시지박스에 넣어야 함)
+    def RSA_createkey(self):
+        crypt_1.Create_Key(self.rsa_textbox_path.toPlainText())
+        self.rsa_textbox_prikey.setText(crypt_1.Read_Pri_Key(self.rsa_textbox_path.toPlainText()))
+        self.rsa_textbox_pubkey.setText(crypt_1.Read_Pub_Key(self.rsa_textbox_path.toPlainText()))
+        QMessageBox.about(self, "createkey", "created!!!")
+        
+        
+
+    #!RSA readme 버튼 이벤트 (다이얼로그 사용해야 함)
+    def RSA_readme(self):
+        print(4)
+
+    # 경로 이벤트 버튼
+    def RSA_Path_Btn(self):
+        path = QFileDialog.getExistingDirectory(self)
+        self.rsa_textbox_path.setText(path+'\\')
+
+
+
     #! 영어 100%가능, 한글 불가능(UTF-8로 디코딩해줘야됨)
     '''def Tab3(self):
         grid = QGridLayout()
@@ -479,120 +607,6 @@ class MainWindow(QMainWindow):
         self.text_box3.setText(Exception.list_path())'''
 
 
-    def Tab4(self):
-        grid = QGridLayout()
-        
-        self.dump_label = QLabel(self)
-        self.ceasar_text_box = QTextEdit()
-        self.ceasar_input_line = QLineEdit()
-
-        btn_ceasar_encoding = QPushButton('encoding', self)
-
-        btn_ceasar_encoding.clicked.connect(self.Ceasar_encode)
-
-        self.spinbox = QSpinBox()
-        self.spinbox.setRange(-25,25)
-        self.spinbox.setSingleStep(1)
-
-        grid.addWidget(self.ceasar_text_box, 0,0,1,0)
-        grid.addWidget(self.spinbox, 1, 0, 1,0)
-        grid.addWidget(self.ceasar_input_line,2,0)
-        grid.addWidget(btn_ceasar_encoding,2,1)
-
-        
-
-        tab = QWidget()
-        tab.setLayout(grid)
-        return tab
-
-    #시저 암호 인코딩 버튼 이벤트
-    def Ceasar_encode(self):
-        self.ceasar_text_box.setText(crypt_1.Ceasar_Crypt(self.ceasar_input_line.text(),self.spinbox.value()))
-
-    #! RSA 파일 경로 입력창을 경로 전용 입력 창으로 변경 필요
-    def Tab5(self):
-        grid = QGridLayout()
-
-        self.rsa_label1 = QLabel('data', self)
-        self.rsa_label2 = QLabel('private key', self)
-        self.rsa_label3 = QLabel('public key',self)
-        self.rsa_label4 = QLabel('path',self)
-        self.rsa_label5 = QLabel('input data',self)
-
-        self.rsa_textbox_data = QTextEdit()
-        self.rsa_textbox_prikey = QTextEdit()
-        self.rsa_textbox_pubkey = QTextEdit()
-        self.rsa_textbox_path = QTextEdit()
-        self.rsa_textbox_inputdata = QTextEdit()
-
-        btn_rsa_readme = QPushButton('readme', self)
-        btn_rsa_createkey = QPushButton('create key', self)
-        btn_rsa_encoding = QPushButton('encoding', self)
-        btn_rsa_decoding = QPushButton('decoding', self)
-
-
-        self.rsa_cb = QComboBox(self)
-        self.rsa_cb.addItem('RSA PKCS#1 v1.5')
-        self.rsa_cb.addItem('RSA PKCS#1 OAEP')
-
-        btn_rsa_readme.clicked.connect(self.RSA_readme)
-        btn_rsa_createkey.clicked.connect(self.RSA_createkey)
-        btn_rsa_encoding.clicked.connect(self.RSA_encode)
-        btn_rsa_decoding.clicked.connect(self.RSA_decode)
-
-        grid.addWidget(self.rsa_cb,0,0,1,4)
-
-        grid.addWidget(self.rsa_label1,1,0,1,4)
-        grid.addWidget(self.rsa_textbox_data,2,0,1,4)
-
-        grid.addWidget(self.rsa_label2,3,0,1,2)
-        grid.addWidget(self.rsa_label3,3,2,1,2)
-        grid.addWidget(self.rsa_textbox_prikey,4,0,1,2)
-        grid.addWidget(self.rsa_textbox_pubkey,4,2,1,2)
-
-        grid.addWidget(self.rsa_label4,5,0,1,2)
-        grid.addWidget(self.rsa_label5,5,2,1,2)
-        grid.addWidget(self.rsa_textbox_path,6,0,1,2)
-        grid.addWidget(self.rsa_textbox_inputdata,6,2,1,2)
-
-        grid.addWidget(btn_rsa_readme,7,0,1,1)
-        grid.addWidget(btn_rsa_createkey,7,1,1,1)
-        grid.addWidget(btn_rsa_encoding,7,2,1,1)
-        grid.addWidget(btn_rsa_decoding,7,3,1,1)
-
-
-        tab = QWidget()
-        tab.setLayout(grid)
-        return tab
-
-    #!RSA 인코딩 버튼 이벤트 (아직 버튼 안만들고 내용도 안넣음)
-    def RSA_encode(self):
-        if(self.rsa_cb.currentText() == 'RSA PKCS#1 v1.5'):
-            self.rsa_textbox_data.setText(crypt_1.RSA_PKCS1_v1_5_Encode(self.rsa_textbox_path.toPlainText(),self.rsa_textbox_inputdata.toPlainText()))
-        
-        elif(self.rsa_cb.currentText() == 'RSA PKCS#1 OAEP'):
-            self.rsa_textrebox_data.setText(crypt_1.RSA_OAEP_Encode(self.rsa_textbox_path.toPlainText(),self.rsa_textbox_inputdata.toPlainText()))
-
-    #!RSA 디코딩 버튼 이벤트
-    def RSA_decode(self):
-        if(self.rsa_cb.currentText() == 'RSA PKCS#1 v1.5'):
-            self.rsa_textbox_data.setText(crypt_1.RSA_PKCS1_v1_5_Decode(self.rsa_textbox_path.toPlainText()))
-
-        elif(self.rsa_cb.currentText() == 'RSA PKCS#1 OAEP'):
-            self.rsa_textbox_data.setText(crypt_1.RSA_OAEP_Decode(self.rsa_textbox_path.toPlainText()))
-
-    #!RSA 키생성 버튼 이벤트 (메세지박스 크기 조절 필요! : 텍스트나 라벨의 크기를 조정한 후 메시지박스에 넣어야 함)
-    def RSA_createkey(self):
-        crypt_1.Create_Key(self.rsa_textbox_path.toPlainText())
-        self.rsa_textbox_prikey.setText(crypt_1.Read_Pri_Key(self.rsa_textbox_path.toPlainText()))
-        self.rsa_textbox_pubkey.setText(crypt_1.Read_Pub_Key(self.rsa_textbox_path.toPlainText()))
-        QMessageBox.about(self, "createkey", "created!!!")
-
-        
-
-    #!RSA readme 버튼 이벤트 (다이얼로그 사용해야 함)
-    def RSA_readme(self):
-        print(4)
 
 
 
