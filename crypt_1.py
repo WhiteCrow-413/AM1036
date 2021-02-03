@@ -121,11 +121,10 @@ def Symmetric_Decrypt(data, data_list): #얘가 암호화냐 복호화냐...
 2. 평문을 RSA_Encode함수를 사용하여 RSA로 암호화 - public키 사용
 3. RSA암호문을 RSA_Decode함수로 복호화 - private키 사용
 - '''
-
-def Create_Key(path): #개인 키 생성 후 파일에 저장
-    try:
+#!키 바이트 별로 생성할 수 있도록 설정하게 만들기
+def Create_Key(path, k_bit): #개인 키 생성 후 파일에 저장
         random_generator = Random.new().read
-        key = RSA.generate(1024, random_generator)
+        key = RSA.generate(int(k_bit), random_generator)
         private_key = key.export_key()
 
         f = open(path+"private.pem",'wb')
@@ -140,8 +139,6 @@ def Create_Key(path): #개인 키 생성 후 파일에 저장
 
         f.close()
 
-    except BaseException:
-        pass
 
 
     
@@ -154,7 +151,8 @@ def Read_Pri_Key(path):
     
         read_pri_key = str(read_pri_key)
         read_pri_key = read_pri_key.replace("b'-----BEGIN RSA PRIVATE KEY-----","")
-        read_pri_key = read_pri_key.replace("-----END RSA PRIVATE KEY-----'","")
+        read_pri_key = read_pri_key.replace("-----END RSA PRIVATE KEY-----","")
+        read_pri_key = read_pri_key.replace("'","")
         read_pri_key = read_pri_key.replace("\\n","")
         f.close()
 
@@ -290,6 +288,5 @@ def RSA_OAEP_Decode(path):
 
     except BaseException:
         pass
-
 
 #대칭함수 순서 abcdefghijklmnopqrstuvwxyz!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~ 넣어야함

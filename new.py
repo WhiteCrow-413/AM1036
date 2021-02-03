@@ -6,6 +6,7 @@ import Number
 import multiprocessing as mp
 import datetime
 import time
+import hashlib
 
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
@@ -67,6 +68,10 @@ class MainWindow(QMainWindow):
         # QMainWindow 추가
         self.setCentralWidget(tabs)
 
+
+##############################################################
+
+
     # 첫번째 탭 생성함수
     def Tab1(self):
         grid = QGridLayout()
@@ -111,6 +116,8 @@ class MainWindow(QMainWindow):
         self.num_cb.addItem('2진수')
         self.num_cb.addItem('8진수')
         self.num_cb.addItem('16진수')
+
+        self.num_cb.activated.connect(self.Num_Cb)
 
         #그리드
         grid.addWidget(self.num_cb, 0,0,1,7)
@@ -176,6 +183,11 @@ class MainWindow(QMainWindow):
         self.num_ck_box2.setChecked(True)
         self.num_ck_box3.setChecked(True)
         self.num_ck_box4.setChecked(True)
+        self.num_cb.setCurrentIndex(0)
+
+    #콤보박스 이벤트
+    def Num_Cb(self):
+        self.num_input_box.setText("")
 
     #체크박스 체크 여부에 따른 라인처리
     def Num_Ck_Box1(self, state):
@@ -201,6 +213,12 @@ class MainWindow(QMainWindow):
             self.num_line4.setEchoMode(QLineEdit.Normal)
         else:
             self.num_line4.setEchoMode(QLineEdit.NoEcho)
+
+
+###################################################################
+
+
+    #HASH       
     def Tab2(self):
         grid = QGridLayout()
 
@@ -236,6 +254,13 @@ class MainWindow(QMainWindow):
         self.hash_ck_box8.stateChanged.connect(self.Hash_Ck_Box8)
 
 
+        #콤보박스
+        self.hash_cb = QComboBox(self)
+        self.hash_cb.addItem('text')
+        self.hash_cb.addItem('file')
+
+        self.hash_cb.activated.connect(self.Hash_Cb)
+
 
         #텍스트 라인
         self.hash_line1 = QLineEdit()
@@ -254,10 +279,12 @@ class MainWindow(QMainWindow):
         btn_hash_encoding = QPushButton('encoding',self)
         btn_hash_decoding = QPushButton('decoding',self)
         btn_hash_reset = QPushButton('reset', self)
+        btn_hash_file = QPushButton('file', self)
         
         btn_hash_encoding.clicked.connect(self.Hash_Encoding_Btn)
         btn_hash_decoding.clicked.connect(self.Hash_Decoding_Btn)
         btn_hash_reset.clicked.connect(self.Hash_Reset_Btn)
+        btn_hash_file.clicked.connect(self.Hash_File_Btn)
 
         #그리드
         grid.addWidget(self.hash_ck_box1,0,0)
@@ -287,9 +314,12 @@ class MainWindow(QMainWindow):
         grid.addWidget(self.hash_label,8,0)
         grid.addWidget(self.hash_input_box,9,0,1,7)
 
+        grid.addWidget(self.hash_cb,10,0)
         grid.addWidget(btn_hash_encoding,10,1)
         grid.addWidget(btn_hash_decoding,10,2)
         grid.addWidget(btn_hash_reset,10,3)
+        grid.addWidget(btn_hash_file, 10, 4)
+        
 
         # 위젯에 레이아웃 추가하기
         tab = QWidget()
@@ -298,25 +328,45 @@ class MainWindow(QMainWindow):
 
     #인코딩 버튼 이벤트
     def Hash_Encoding_Btn(self):
-        self.hash_line1.setText(hash.Base64_Encode(self.hash_input_box.toPlainText()))
-        self.hash_line2.setText(hash.Url_Encode_Hangle(self.hash_input_box.toPlainText()))
-        self.hash_line3.setText(hash.Url_Encode_English(self.hash_input_box.toPlainText()))
-        self.hash_line4.setText(hash.Ascii_Encode(self.hash_input_box.toPlainText()))
-        self.hash_line5.setText(hash.MD5_Encode(self.hash_input_box.toPlainText()))
-        self.hash_line6.setText(hash.SHA1_Encode(self.hash_input_box.toPlainText()))
-        self.hash_line7.setText(hash.SHA256_Encode(self.hash_input_box.toPlainText()))
-        self.hash_line8.setText(hash.SHA512_Encode(self.hash_input_box.toPlainText()))
+        if(self.hash_cb.currentText() == 'text'):
+            self.hash_line1.setText(hash.Base64_Encode(self.hash_input_box.toPlainText()))
+            self.hash_line2.setText(hash.Url_Encode_Hangle(self.hash_input_box.toPlainText()))
+            self.hash_line3.setText(hash.Url_Encode_English(self.hash_input_box.toPlainText()))
+            self.hash_line4.setText(hash.Ascii_Encode(self.hash_input_box.toPlainText()))
+            self.hash_line5.setText(hash.MD5_Encode(self.hash_input_box.toPlainText()))
+            self.hash_line6.setText(hash.SHA1_Encode(self.hash_input_box.toPlainText()))
+            self.hash_line7.setText(hash.SHA256_Encode(self.hash_input_box.toPlainText()))
+            self.hash_line8.setText(hash.SHA512_Encode(self.hash_input_box.toPlainText()))
+        else:
+            self.hash_line1.setText("")
+            self.hash_line2.setText("")
+            self.hash_line3.setText("")
+            self.hash_line4.setText("")
+            self.hash_line5.setText(hash.MD5_Encode_F(self.hash_input_box.toPlainText()))
+            self.hash_line6.setText(hash.SHA1_Encode_F(self.hash_input_box.toPlainText()))
+            self.hash_line7.setText(hash.SHA256_Encode_F(self.hash_input_box.toPlainText()))
+            self.hash_line8.setText(hash.SHA512_Encode_F(self.hash_input_box.toPlainText()))
 
     #디코딩 버튼 이벤트
     def Hash_Decoding_Btn(self):
-        self.hash_line1.setText(hash.Base64_Decode(self.hash_input_box.toPlainText()))
-        self.hash_line2.setText(hash.Url_Decode_Hangle(self.hash_input_box.toPlainText()))
-        self.hash_line3.setText(hash.Url_Decode_English(self.hash_input_box.toPlainText()))
-        self.hash_line4.setText(hash.Ascii_Decode(self.hash_input_box.toPlainText()))
-        self.hash_line5.setText("")
-        self.hash_line6.setText("")
-        self.hash_line7.setText("")
-        self.hash_line8.setText("")
+        if(self.hash_cb.currentText() == 'text'):
+            self.hash_line1.setText(hash.Base64_Decode(self.hash_input_box.toPlainText()))
+            self.hash_line2.setText(hash.Url_Decode_Hangle(self.hash_input_box.toPlainText()))
+            self.hash_line3.setText(hash.Url_Decode_English(self.hash_input_box.toPlainText()))            
+            self.hash_line4.setText(hash.Ascii_Decode(self.hash_input_box.toPlainText()))
+            self.hash_line5.setText("")
+            self.hash_line6.setText("")
+            self.hash_line7.setText("")
+            self.hash_line8.setText("")
+        else:
+            self.hash_line1.setText("")
+            self.hash_line2.setText("")
+            self.hash_line3.setText("")
+            self.hash_line4.setText("")
+            self.hash_line5.setText("")
+            self.hash_line6.setText("")
+            self.hash_line7.setText("")
+            self.hash_line8.setText("")
 
 
     #리셋 버튼 이벤트
@@ -329,6 +379,7 @@ class MainWindow(QMainWindow):
         self.hash_line6.setText("")
         self.hash_line7.setText("")
         self.hash_line8.setText("")
+        self.hash_input_box.setText("")
         self.hash_ck_box1.setChecked(True)
         self.hash_ck_box2.setChecked(True)
         self.hash_ck_box3.setChecked(True)
@@ -337,8 +388,25 @@ class MainWindow(QMainWindow):
         self.hash_ck_box6.setChecked(True)
         self.hash_ck_box7.setChecked(True)
         self.hash_ck_box8.setChecked(True)
+        self.hash_cb.setCurrentIndex(0)
+    
+    #파일 불러오기 버튼
+    def Hash_File_Btn(self):
+        if(self.hash_cb.currentText() == 'file'):
+            path = QFileDialog.getOpenFileName(self)
 
+            self.hash_input_box.setText(path[0])
+        else:
+            msg = "'text' -> 'file"
+            title = "error"
+            msg_box = QMessageBox(self)
+            msg_box.question(self, title, msg, QMessageBox.Ok)
 
+    #콤보박스 변경 이벤트
+    def Hash_Cb(self):
+        self.hash_input_box.setText("")
+
+        
     #체크박스 체크 여부에 따른 라인처리
     def Hash_Ck_Box1(self, state):
         if state == Qt.Checked:
@@ -389,7 +457,7 @@ class MainWindow(QMainWindow):
             self.hash_line8.setEchoMode(QLineEdit.NoEcho)
 
 
-
+##################################################################
 
 
     def Tab3(self):
@@ -423,35 +491,33 @@ class MainWindow(QMainWindow):
         self.ceasar_text_box.setText(crypt_1.Ceasar_Crypt(self.ceasar_input_line.text(),self.spinbox.value()))
 
 
+###################################################################
 
-
-
+    #호환 사이트 : https://8gwifi.org/rsafunctions.jsp
     #Tab4 RSA
     def Tab4(self):
         grid = QGridLayout()
 
+        #라벨
         self.rsa_label1 = QLabel('data', self)
         self.rsa_label2 = QLabel('private key', self)
         self.rsa_label3 = QLabel('public key',self)
-        self.rsa_label4 = QLabel('path',self)
         self.rsa_label5 = QLabel('input data',self)
-
+        self.rsa_label6 = QLabel('key size :', self)
+        
+        #텍스트박스
         self.rsa_textbox_data = QTextEdit()
         self.rsa_textbox_prikey = QTextEdit()
         self.rsa_textbox_pubkey = QTextEdit()
         self.rsa_textbox_path = QTextEdit()
         self.rsa_textbox_inputdata = QTextEdit()
 
+        #푸쉬버튼
         btn_rsa_readme = QPushButton('readme', self)
         btn_rsa_createkey = QPushButton('create key', self)
         btn_rsa_encoding = QPushButton('encoding', self)
         btn_rsa_decoding = QPushButton('decoding', self)
         btn_rsa_path = QPushButton('path',self)
-
-
-        self.rsa_cb = QComboBox(self)
-        self.rsa_cb.addItem('RSA PKCS#1 v1.5')
-        self.rsa_cb.addItem('RSA PKCS#1 OAEP')
 
         btn_rsa_readme.clicked.connect(self.RSA_readme)
         btn_rsa_createkey.clicked.connect(self.RSA_createkey)
@@ -459,25 +525,43 @@ class MainWindow(QMainWindow):
         btn_rsa_decoding.clicked.connect(self.RSA_decode)
         btn_rsa_path.clicked.connect(self.RSA_Path_Btn)
 
-        grid.addWidget(self.rsa_cb,0,0,1,4)
+        #콤보박스
+        self.rsa_cb1 = QComboBox(self)
+        self.rsa_cb1.addItem('RSA PKCS#1 v1.5')
+        self.rsa_cb1.addItem('RSA PKCS#1 OAEP')
 
-        grid.addWidget(self.rsa_label1,1,0,1,4)
-        grid.addWidget(self.rsa_textbox_data,2,0,1,4)
+        self.rsa_cb2 = QComboBox(self)
+        self.rsa_cb2.addItem('1024')
+        self.rsa_cb2.addItem('512')
+        self.rsa_cb2.addItem('2048')
+        self.rsa_cb2.addItem('4096')
 
-        grid.addWidget(self.rsa_label2,3,0,1,2)
-        grid.addWidget(self.rsa_label3,3,2,1,2)
-        grid.addWidget(self.rsa_textbox_prikey,4,0,1,2)
-        grid.addWidget(self.rsa_textbox_pubkey,4,2,1,2)
+        self.rsa_cb1.activated.connect(self.RSA_Cb1)
+        self.rsa_cb2.activated.connect(self.RSA_Cb2)
 
-        grid.addWidget(btn_rsa_path,5,0,1,2)
-        grid.addWidget(self.rsa_label5,5,2,1,2)
-        grid.addWidget(self.rsa_textbox_path,6,0,1,2)
-        grid.addWidget(self.rsa_textbox_inputdata,6,2,1,2)
+        
+        #그리드
+        grid.addWidget(self.rsa_cb1,0,0,1,6)
+        grid.addWidget(self.rsa_label6,0,6,1,1)
+        grid.addWidget(self.rsa_cb2,0,7,1,1)
 
-        grid.addWidget(btn_rsa_readme,7,0,1,1)
-        grid.addWidget(btn_rsa_createkey,7,1,1,1)
-        grid.addWidget(btn_rsa_encoding,7,2,1,1)
-        grid.addWidget(btn_rsa_decoding,7,3,1,1)
+        grid.addWidget(self.rsa_label1,1,0,1,8)
+        grid.addWidget(self.rsa_textbox_data,2,0,1,8)
+
+        grid.addWidget(self.rsa_label2,3,0,1,4)
+        grid.addWidget(self.rsa_label3,3,4,1,4)
+        grid.addWidget(self.rsa_textbox_prikey,4,0,1,4)
+        grid.addWidget(self.rsa_textbox_pubkey,4,4,1,4)
+
+        grid.addWidget(btn_rsa_path,5,0,1,4)
+        grid.addWidget(self.rsa_label5,5,4,1,4)
+        grid.addWidget(self.rsa_textbox_path,6,0,1,4)
+        grid.addWidget(self.rsa_textbox_inputdata,6,4,1,4)
+
+        grid.addWidget(btn_rsa_readme,7,0,1,2)
+        grid.addWidget(btn_rsa_createkey,7,2,1,2)
+        grid.addWidget(btn_rsa_encoding,7,4,1,2)
+        grid.addWidget(btn_rsa_decoding,7,6,1,2)
 
 
         tab = QWidget()
@@ -486,23 +570,23 @@ class MainWindow(QMainWindow):
 
     # RSA 인코딩 버튼 이벤트 
     def RSA_encode(self):
-        if(self.rsa_cb.currentText() == 'RSA PKCS#1 v1.5'):
+        if(self.rsa_cb1.currentText() == 'RSA PKCS#1 v1.5'):
             self.rsa_textbox_data.setText(crypt_1.RSA_PKCS1_v1_5_Encode(self.rsa_textbox_path.toPlainText(),self.rsa_textbox_inputdata.toPlainText()))
         
-        elif(self.rsa_cb.currentText() == 'RSA PKCS#1 OAEP'):
+        elif(self.rsa_cb1.currentText() == 'RSA PKCS#1 OAEP'):
             self.rsa_textbox_data.setText(crypt_1.RSA_OAEP_Encode(self.rsa_textbox_path.toPlainText(),self.rsa_textbox_inputdata.toPlainText()))
 
     # RSA 디코딩 버튼 이벤트
     def RSA_decode(self):
-        if(self.rsa_cb.currentText() == 'RSA PKCS#1 v1.5'):
+        if(self.rsa_cb1.currentText() == 'RSA PKCS#1 v1.5'):
             self.rsa_textbox_data.setText(crypt_1.RSA_PKCS1_v1_5_Decode(self.rsa_textbox_path.toPlainText()))
 
-        elif(self.rsa_cb.currentText() == 'RSA PKCS#1 OAEP'):
+        elif(self.rsa_cb1.currentText() == 'RSA PKCS#1 OAEP'):
             self.rsa_textbox_data.setText(crypt_1.RSA_OAEP_Decode(self.rsa_textbox_path.toPlainText()))
 
     #!RSA 키생성 버튼 이벤트 (메세지박스 크기 조절 필요! : 텍스트나 라벨의 크기를 조정한 후 메시지박스에 넣어야 함)
     def RSA_createkey(self):
-        crypt_1.Create_Key(self.rsa_textbox_path.toPlainText())
+        crypt_1.Create_Key(self.rsa_textbox_path.toPlainText(),self.rsa_cb2.currentText())
         self.rsa_textbox_prikey.setText(crypt_1.Read_Pri_Key(self.rsa_textbox_path.toPlainText()))
         self.rsa_textbox_pubkey.setText(crypt_1.Read_Pub_Key(self.rsa_textbox_path.toPlainText()))
         QMessageBox.about(self, "createkey", "created!!!")
@@ -521,6 +605,21 @@ class MainWindow(QMainWindow):
         path = QFileDialog.getExistingDirectory(self)
         self.rsa_textbox_path.setText(path+'\\')
 
+    #콤보 박스 이벤트
+    def RSA_Cb1(self):
+        self.rsa_textbox_data.setText("")
+        self.rsa_textbox_inputdata.setText("")
+        self.rsa_textbox_path.setText("")
+
+    def RSA_Cb2(self):
+        self.rsa_textbox_data.setText("")
+        self.rsa_textbox_inputdata.setText("")
+        self.rsa_textbox_path.setText("")
+        self.rsa_textbox_prikey.setText("")
+        self.rsa_textbox_pubkey.setText("")
+
+
+###################################################################
 
 
     #! 영어 100%가능, 한글 불가능(UTF-8로 디코딩해줘야됨)
