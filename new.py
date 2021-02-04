@@ -6,7 +6,6 @@ import Number
 import multiprocessing as mp
 import datetime
 import time
-import hashlib
 
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
@@ -595,7 +594,7 @@ class MainWindow(QMainWindow):
 
     #!RSA readme 버튼 이벤트 (내용 변경 필요)
     def RSA_readme(self):
-        msg = "ㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁ"
+        msg = "주의사항: 뭐 써야하지???"
         title = "readme"
         msg_box = QMessageBox(self)
         msg_box.question(self, title, msg, QMessageBox.Ok)
