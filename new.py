@@ -512,13 +512,11 @@ class MainWindow(QMainWindow):
         self.rsa_textbox_inputdata = QTextEdit()
 
         #푸쉬버튼
-        btn_rsa_readme = QPushButton('readme', self)
         btn_rsa_createkey = QPushButton('create key', self)
         btn_rsa_encoding = QPushButton('encoding', self)
         btn_rsa_decoding = QPushButton('decoding', self)
         btn_rsa_path = QPushButton('path',self)
 
-        btn_rsa_readme.clicked.connect(self.RSA_readme)
         btn_rsa_createkey.clicked.connect(self.RSA_createkey)
         btn_rsa_encoding.clicked.connect(self.RSA_encode)
         btn_rsa_decoding.clicked.connect(self.RSA_decode)
@@ -557,10 +555,9 @@ class MainWindow(QMainWindow):
         grid.addWidget(self.rsa_textbox_path,6,0,1,4)
         grid.addWidget(self.rsa_textbox_inputdata,6,4,1,4)
 
-        grid.addWidget(btn_rsa_readme,7,0,1,2)
-        grid.addWidget(btn_rsa_createkey,7,2,1,2)
-        grid.addWidget(btn_rsa_encoding,7,4,1,2)
-        grid.addWidget(btn_rsa_decoding,7,6,1,2)
+        grid.addWidget(btn_rsa_createkey,7,1,1,2)
+        grid.addWidget(btn_rsa_encoding,7,3,1,2)
+        grid.addWidget(btn_rsa_decoding,7,5,1,2)
 
 
         tab = QWidget()
@@ -590,14 +587,6 @@ class MainWindow(QMainWindow):
         self.rsa_textbox_pubkey.setText(crypt_1.Read_Pub_Key(self.rsa_textbox_path.toPlainText()))
         QMessageBox.about(self, "createkey", "created!!!")
         
-        
-
-    #!RSA readme 버튼 이벤트 (내용 변경 필요)
-    def RSA_readme(self):
-        msg = "주의사항: 뭐 써야하지???"
-        title = "readme"
-        msg_box = QMessageBox(self)
-        msg_box.question(self, title, msg, QMessageBox.Ok)
 
     # 경로 이벤트 버튼
     def RSA_Path_Btn(self):
