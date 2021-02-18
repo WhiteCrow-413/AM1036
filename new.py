@@ -3,46 +3,17 @@ import sys
 import hash
 import crypt_1 #시저, 대칭, RSA 모듈(이름 변경 필요)
 import Number
-import multiprocessing as mp
-import datetime
-import time
 
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5 import QtCore
 from PyQt5.QtCore import Qt, QThread, pyqtSignal
-from multiprocessing import Process, Queue
 
 #! 변수명 통일 필요
 
-def producer(q):
-    proc = mp.current_process()
-    
-    while True:
-        now = datetime.datetime.now()
-        data = str(now)
-        q.put(data)
-        time.sleep(1)
-
-
-
-class Consumer(QThread):
-    poped = pyqtSignal(str)
-
-    def __init__(self, q):
-        super().__init__()
-        self.q = q
-
-    def run(self):
-        while True:
-            if not self.q.empty():
-                data = q.get()
-                self.poped.emit(data)
-
-
 
 class MainWindow(QMainWindow):
-    def __init__(self, q):
+    def __init__(self):
         super().__init__()
         
         # 윈도우 설정
@@ -50,10 +21,6 @@ class MainWindow(QMainWindow):
         #self.setFixedSize(400, 400) # 크기고정
         self.setWindowTitle('HOMIN PROJECT')
 
-        #멀티프로세싱 설정
-        self.consumer = Consumer(q)
-        self.consumer.poped.connect(self.Tab1)
-        self.consumer.poped.connect(self.Tab2)
         #self.consumer.poped.connect(self.Tab3) -> 나중에 풀 것
 
         # Tab Set
@@ -607,106 +574,13 @@ class MainWindow(QMainWindow):
         self.rsa_textbox_pubkey.setText("")
 
 
-###################################################################
-
-
-    #! 영어 100%가능, 한글 불가능(UTF-8로 디코딩해줘야됨)
-    '''def Tab3(self):
-        grid = QGridLayout()
-
-        # 변수 선언 부분
-        self.label1 = QLabel('Extension', self)
-        self.label2 = QLabel('Process', self)
-        self.label3 = QLabel('Path', self)
-
-        self.text_box1 = QTextEdit()
-        self.text_box2 = QTextEdit()
-        self.text_box3 = QTextEdit()
-        self.ex_input_box = QTextEdit()
-
-        btn_add_extension = QPushButton('+', self)
-        btn_sub_extension = QPushButton('-', self)
-        btn_add_process = QPushButton('+', self)
-        btn_sub_process = QPushButton('-', self)
-        btn_add_path = QPushButton('+', self)
-        btn_sub_path = QPushButton('-', self)
-
-        self.label1.setAlignment(Qt.AlignCenter)
-        self.label2.setAlignment(Qt.AlignCenter)
-        self.label3.setAlignment(Qt.AlignCenter)
-
-        btn_add_extension.clicked.connect(self.btn_add1)
-        btn_add_process.clicked.connect(self.btn_add2)
-        btn_add_path.clicked.connect(self.btn_add3)
-        btn_sub_extension.clicked.connect(self.btn_sub1)
-        btn_sub_process.clicked.connect(self.btn_sub2)
-        btn_sub_process.clicked.connect(self.btn_sub3)
-
-        # 실제 그리드 작업 부분
-        grid.addWidget(self.label1, 0, 0, 1, 2)
-        grid.addWidget(self.label2, 0, 2, 1, 2)
-        grid.addWidget(self.label3, 0, 4, 1, 2)
-
-        grid.addWidget(self.text_box1, 1, 0, 1, 2)
-        grid.addWidget(self.text_box2, 1, 2, 1, 2)
-        grid.addWidget(self.text_box3, 1, 4, 1, 2)
-
-        grid.addWidget(btn_add_extension, 2, 0)
-        grid.addWidget(btn_sub_extension, 2, 1)
-        grid.addWidget(btn_add_process, 2, 2)
-        grid.addWidget(btn_sub_process, 2, 3)
-        grid.addWidget(btn_add_path, 2, 4)
-        grid.addWidget(btn_sub_path, 2, 5)
-
-        grid.addWidget(self.ex_input_box, 3, 0, 1, 6)
-
-        # 시작할 때 리스트업
-        self.text_box1.setText(Exception.list_extension())
-        self.text_box2.setText(Exception.list_process())
-        self.text_box3.setText(Exception.list_path())
-
-        # 위젯에 레이아웃 추가하기
-        tab = QWidget()
-        tab.setLayout(grid)
-        return tab
-
-    #! QTextBrowser으로 깔끔한 리스트 업 가능 + 추가로 옆에 '-'버튼을 만들어서 삭제하면 더 깔끔할 듯
-    def btn_add1(self):
-        Exception.AddExtension(self.ex_input_box.toPlainText())
-        self.text_box1.setText(Exception.list_extension())
-
-    def btn_add2(self):
-        Exception.AddProcess(self.ex_input_box.toPlainText())
-        self.text_box2.setText(Exception.list_process())
-
-    def btn_add3(self):
-        Exception.AddPath(self.ex_input_box.toPlainText())
-        self.text_box3.setText(Exception.list_path())
-
-    def btn_sub1(self):
-        Exception.SubExtension(self.ex_input_box.toPlainText())
-        self.text_box1.setText(Exception.list_extension())
-
-    def btn_sub2(self):
-        Exception.SubProcess(self.ex_input_box.toPlainText())
-        self.text_box2.setText(Exception.list_process())
-
-    #! 작동 안됨 왜지?
-    def btn_sub3(self):
-        Exception.SubPath(self.ex_input_box.toPlainText())
-        self.text_box3.setText(Exception.list_path())'''
-
-
 
 
 
 if __name__ == '__main__':
-    q = Queue()
 
-    p = Process(name="producer", target=producer, args=(q, ), daemon=True)
-    p.start()
 
     app = QApplication(sys.argv)
-    mainWindow = MainWindow(q)
+    mainWindow = MainWindow()
     mainWindow.show()
     sys.exit(app.exec_())
