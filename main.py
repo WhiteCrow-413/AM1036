@@ -17,7 +17,8 @@ class MainWindow(QMainWindow):
         
         # Window Set
         self.setGeometry(300, 300, 500, 600)  # x, y, w, h
-        self.setWindowTitle('HOMIN PROJECT')
+        self.setWindowTitle('AM 10:36')
+        self.statusBar().showMessage('Copyright (C) 2021. integrity, PTTC All Rights Reserved')
 
         # Tab Set
         tabs = QTabWidget()
