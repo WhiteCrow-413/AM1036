@@ -7,11 +7,13 @@ import time
 """
 Add-MpPreference : 추가
 Remove-MpPreference : 삭제
-
 -ExclusionExtension : 지정된 확장명을 가진 모든 파일
 -ExclusionPath : 폴더 내 모든 파일 또는 지정된 파일
 -ExclusionProcess : 프로세스
 """
+
+path = os.getcwd()
+file_path = path + "//temp.ini"
 
 def AddExtension(log):
 	tmp = 'powershell Add-MpPreference -ExclusionExtension "'+ log +'"'
@@ -44,11 +46,11 @@ def SubPath(log):
 
 
 def list_extension():
-	command = 'powershell Get-MpPreference > /temp.ini'
+	command = 'powershell Get-MpPreference > %s' % (file_path)
 
 	os.system(command)
 
-	file = open('/temp.ini','rt', encoding = 'utf-8')
+	file = open(file_path,'rt', encoding = 'utf-8')
 	line = file.readline()
 	for line in file:
 		if (line.find("ExclusionExtension") >= 0):
@@ -58,11 +60,11 @@ def list_extension():
 	return extension
 
 def list_process():
-	command = 'powershell Get-MpPreference > /temp.ini'
+	command = 'powershell Get-MpPreference > %s' % (file_path)
 
 	os.system(command)
 
-	file = open('/temp.ini','rt', encoding = 'utf-8')
+	file = open(file_path,'rt', encoding = 'utf-8')
 	line = file.readline()
 	for line in file:
 		if (line.find("ExclusionProcess") >= 0):
@@ -72,14 +74,14 @@ def list_process():
 
 
 def list_path():
-	command = 'powershell Get-MpPreference > /temp.ini'
+	command = 'powershell Get-MpPreference > %s' % (file_path)
 
 	os.system(command)
 
-	file = open('/temp.ini','rt', encoding = 'utf-8')
+	file = open(file_path,'rt', encoding = 'utf-8')
 	line = file.readline()
 	for line in file:
 		if (line.find("ExclusionPath") >= 0):
-			path = line[49:-2]
+			tt = line[49:-2]
 
-	return path
+	return tt
